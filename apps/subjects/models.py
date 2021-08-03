@@ -1,5 +1,4 @@
 from django.db import models
-
 # Create your models here.
 
 class Subject(models.Model):
@@ -12,3 +11,4 @@ class Subject(models.Model):
         verbose_name = 'Asignatura'
         verbose_name_plural = 'Asignaturas'
         ordering=['-id']
+

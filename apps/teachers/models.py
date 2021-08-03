@@ -14,8 +14,8 @@ User = get_user_model()
 # Create your models here.
 
 class Teacher(PropertyUser):
-    subjects=models.ManyToManyField(Subject,verbose_name="Asignaturas",related_name="teacher_subjects", blank=True)
-    courses=models.ManyToManyField(Course,verbose_name="Cursos",related_name="teacher_courses", blank=True)
+    address = models.CharField(max_length=150, verbose_name="Dirección")
+
     def __str__(self):
         return "{} {}".format(self.first_name,self.last_name)
     
@@ -24,24 +24,30 @@ class Teacher(PropertyUser):
         verbose_name_plural = 'Docentes'
         ordering=['-id']
 
+@receiver(post_save, sender=Teacher)
 def create_profile_teacher(sender,instance,**kwargs):
     first_name,last_name=instance.first_name,instance.last_name
-    if instance.user.id is None:
+    if instance.user is None:
         email=first_name.split(" ")[0].lower()+"."+last_name.split(" ")[0].lower()+"@sgateacher.edu.co"
         username=first_name.split(" ")[0].lower()+last_name.split(" ")[0].lower()
-        password="SGAOPEN2021"
-
-        createGroup,group=Group.objects.get_or_create(name="DOCENTES")
-        create_user=User()        
-        create_user.username=username
+        password="SGAOPEN2021"        
+        create_user=User.objects.create_user(username, email, password)
         create_user.first_name=first_name
         create_user.last_name=last_name
-        create_user.email=email
-        create_user.set_password(password)
-        create_user.save()
-        if group is None:
-            create_user.groups.set([createGroup])  
-        else:
-            create_user.groups.set([group])         
+        create_user.save() 
         instance.user=create_user
-        instance.save() 
+        instance.save()
+
+
+
+class TeacherSubject(models.Model):
+    teacher = models.ForeignKey("Teacher", on_delete=models.CASCADE, related_name="_teacher_subject", null=True, blank=True)    
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="_subject")
+
+
+    def __str__(self):
+        return f"{self.teacher.user.username} - {self.course.name} - {self.subject}"
+    
+    class Meta:
+        verbose_name = "Teacher Subject"
+        verbose_name_plural = "Teacher Subjects"

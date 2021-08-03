@@ -34,17 +34,10 @@ def create_profile_student(sender,instance,**kwargs):
         username=first_name[:3].lower()+last_name.split(" ")[0].lower()
         password="SGAOPEN2021"
         
-        createGroup,group=Group.objects.get_or_create(name="ESTUDIANTES")
-        create_user=User()        
-        create_user.username=username
+        create_user=User.objects.create_user(username, email, password)
         create_user.first_name=first_name
         create_user.last_name=last_name
-        create_user.email=email
-        create_user.set_password(password)
-        create_user.save()
-        if group is None:
-            create_user.groups.set([createGroup])  
-        else:
-            create_user.groups.set([group])  
+        create_user.save() 
         instance.user=create_user
         instance.save()    
+
