@@ -19,6 +19,10 @@ class Student(PropertyUser):
     
     def get_fullName(self):
         return "{} {}".format(self.first_name,self.last_name)
+    
+    class Meta:
+        verbose_name = "Estudiante"
+        verbose_name_plural = "Estudiantes"
 
 @receiver(post_save, sender=Student)
 def create_profile_student(sender,instance,**kwargs):    
