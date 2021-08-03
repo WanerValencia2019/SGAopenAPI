@@ -3,8 +3,10 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
-from apps.courses.models import Course
 from django.dispatch import receiver
+
+from apps.courses.models import Course
+
 
 from apps.users.models import PropertyUser
 
